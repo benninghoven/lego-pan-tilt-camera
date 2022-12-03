@@ -4,27 +4,24 @@ from buildhat import Motor
 
 # Software Limitatons ~ Spooky!
 SPEED = 10
-MAX_RIGHT = 80
-MAX_LEFT = -80
+
+MAX_RIGHT = 90
+MAX_LEFT = -90
+
 MAX_UP = 80
-MAX_DOWN = 0
 HEAD_POS = 10
-SHIFT_AMNT = 8
+MAX_DOWN = -10
 
 DEBUG = 1
 
 class Robot:
     def __init__(self):
 
-        self.debounce = False
-
-        self.name = "K.Y.L.E"
-        print(f"setting up {self.name}")
+        print(f"setting up robot")
 
         self.flippy = 1
-
         self.xPosition = 0
-        self.yPosition = HEAD_POS
+        self.yPosition = 0
 
         self.x = Motor('C')
         self.y = Motor('D')
@@ -35,100 +32,51 @@ class Robot:
         self.x.when_rotated = self.MotorHandlerX 
         self.y.when_rotated = self.MotorHandlerY
 
-        if DEBUG:
-            self.InitialAlign()
+        self.InitialAlign()
            
         print(f"finished setup")
 
     def Patrol(self):
-        self.x.set_default_speed(6)
-        for i in range(5):
-            self.x.run_to_position(MAX_RIGHT)
-            self.x.run_to_position(MAX_LEFT)
-        self.x.run_to_position(0)
-        self.x.set_default_speed(SPEED)
+        self.x.run_to_position(MAX_RIGHT)
+        self.x.run_to_position(MAX_LEFT)
 
 
-    def MotorHandlerX(self,speed, pos, apos):
-        self.xPosition = pos
+    def MotorHandlerX(self,speed, pos, apos): # MIGHT BE TRASH?
+        print(f"MOTOR X position: {pos}\t")
         if pos > 90 or pos < -90:
             self.x.stop()
-        print(f"MOTOR X position: {pos}\t")
+            print("MOTOR X STOPPED! TOO FAR!")
+        self.xPosition = pos
 
     def MotorHandlerY(self,speed, pos, apos):
-        self.yPosition = pos
+        print(f"MOTOR Y position: {pos}\t")
         if pos > 45 or pos < -45:
             self.y.stop()
-        print(f"MOTOR Y position: {pos}\t")
+            print("MOTOR Y STOPPED! TOO FAR!")
+        self.yPosition = pos
 
     def InitialAlign(self):
+        #FIX ME DIRECTION = clockwise or counter if how fucked up it is!
+        self.x.run_to_position(0)
+        self.y.run_to_position(HEAD_POS)
         self.y.run_to_position(MAX_DOWN)
+        self.y.run_to_position(HEAD_POS)
         self.x.run_to_position(MAX_RIGHT)
+        self.x.run_to_position(0)
         self.x.run_to_position(MAX_LEFT)
         self.x.run_to_position(0)
         self.y.run_to_position(MAX_UP)
+        self.y.run_to_position(HEAD_POS)
         self.y.run_to_position(MAX_DOWN)
+        self.y.run_to_position(HEAD_POS)
 
-    def GoLeft(self):
-        if self.debounce:
-            return
-        else:
-            self.debounce = True
-        self.nextPos_x = self.xPosition - SHIFT_AMNT
-        if self.nextPos_x < MAX_LEFT:
-            self.nextPos_x = MAX_LEFT
-        else:
-            self.x.run_to_position(self.nextPos_x)
-        self.debounce = False
+    def GetPosition(self):
+        return {self.x.get_position(),self.y.get_position()}
 
     def GoRight(self):
-        if self.debounce:
-            return
-        else:
-            self.debounce = True
-        self.nextPos_x = self.xPosition + SHIFT_AMNT
-        if self.nextPos_x > MAX_RIGHT:
-            self.nextPos_x = MAX_RIGHT
-        else:
-            self.x.run_to_position(self.nextPos_x)
-        self.debounce = False
-
-    def GoUp(self):
-        if self.debounce:
-            return
-        else:
-            self.debounce = True
-        self.nextPos_y = self.yPosition + SHIFT_AMNT
-        if self.nextPos_y > MAX_UP:
-            self.nextPos_y = MAX_UP
-        else:
-            self.y.run_to_position(self.nextPos_y)
-        self.debounce = False
-
-    def GoDown(self):
-        if self.debounce:
-            return
-        else:
-            self.debounce = True
-        self.nextPos_y = self.yPosition - SHIFT_AMNT
-        if self.nextPos_y < MAX_DOWN:
-            self.nextPos_y = MAX_DOWN
-        else:
-            self.y.run_to_position(self.nextPos_y)
-        self.debounce = False
-
-
-    def Test(self):
-        for i in range(100):
-            print("PATROLLING")
-            self.Patrol()
-
-
-
-
-
-
-
+        print("GOING RIGHT")
+        self.x.start(5)
+        self.x.stop()
 
 
 
