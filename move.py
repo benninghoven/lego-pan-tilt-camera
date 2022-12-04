@@ -1,6 +1,11 @@
 from robot import Robot
 from pynput import keyboard
 import time
+FPS = 60
+GAME = 1
+SPEED = 25
+
+sleepTime = 1/FPS
 
 class Inp:
     def __init__(self):
@@ -21,16 +26,19 @@ class Inp:
             print(f"{key}")
             if key.char == 'a':
                 print("GOING LEFT")
-                self.rob.x.start(10)
+                self.rob.x.start(SPEED)
             elif key.char == 'd':
                 print("GOING RIGHT")
-                self.rob.x.start(-10)
+                self.rob.x.start(SPEED*-1)
             elif key.char == 'w':
                 print("GOING UP")
-                self.rob.y.start(10)
+                self.rob.y.start(SPEED)
             elif key.char == 's':
                 print("GOING DOWN")
-                self.rob.y.start(-10)
+                self.rob.y.start(SPEED*-1)
+            else:
+                print("QUITTING")
+                GAME = 0
             print("normal")
         except AttributeError:
             print(f"{key}")
@@ -57,8 +65,9 @@ bob.rob.y.coast()
 time.sleep(5)
 
 
-while True:
+while GAME:
     pass
+    time.sleep(sleepTime)
 
 
 """
